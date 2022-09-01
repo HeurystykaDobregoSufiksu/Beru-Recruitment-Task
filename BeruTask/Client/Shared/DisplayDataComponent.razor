@@ -1,0 +1,20 @@
+﻿@using BeruTask.Client.Services.Interfaces
+@using BeruTask.Shared
+<h3>DisplayDataComponent</h3>
+
+@code {
+    
+    protected override void OnInitialized() => this._goldPriceService.OnGetData += new Action<GoldPriceDto>(this.handleData);
+
+    public void Dispose() => this._goldPriceService.OnGetData -= new Action<GoldPriceDto>(this.handleData);
+
+    private void handleData(GoldPriceDto dto)
+    {
+      this.goldPrice = dto == null ? (GoldPriceDto) null : dto;
+      this.StateHasChanged();
+    }
+
+    [Inject]
+    private IGoldPriceService _goldPriceService { get; set; }
+  }
+}

@@ -14,21 +14,22 @@ namespace BeruTask.Server.Services
 
         public SaveDataService(IGoldPriceRepo goldPriceRepository,IConfiguration config,IMapper mapper)
         {
-            this._goldPriceRepo = goldPriceRepository;
-            this._config = config;
-            this._mapper = mapper;
+            _goldPriceRepo = goldPriceRepository;
+            _config = config;
+           _mapper = mapper;
         }
 
         public async Task<bool> SaveData(GoldPriceModel saveDataModel)
         {
-            bool flag = await SaveDataToDB(saveDataModel);
-            if (flag) flag = await this.SaveDataToJsonFile(this._mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel));
-            return flag;
+            return (await SaveDataToDB(saveDataModel)&& await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel)));
+           /* bool flag = await SaveDataToDB(saveDataModel);
+            if (flag) flag = await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel));
+            return flag;*/
         }
 
         public async Task<bool> SaveDataToDB(GoldPriceModel saveDataModel)
         {
-            bool db = await this._goldPriceRepo.SaveData(saveDataModel);
+            bool db = await _goldPriceRepo.SaveData(saveDataModel);
             return db;
         }
 

@@ -1,5 +1,6 @@
 ﻿using BeruTask.Server.Models;
 using BeruTask.Server.Services.Interfaces;
+using BeruTask.Shared;
 using System.Net;
 
 namespace BeruTask.Server.Services
@@ -16,8 +17,7 @@ namespace BeruTask.Server.Services
         public async Task<GoldPriceModel> GetDataAsync(RequestModel requestModel)
         {
             HttpClient client = this._clientFactory.CreateClient("nbp");
-            try
-            {
+           
                 string startDate = requestModel.startDate.ToString("yyyy-MM-dd");
                 string endDate = requestModel.endDate.ToString("yyyy-MM-dd");
                 string requestUri = string.Format(startDate + "/" + endDate);
@@ -25,14 +25,8 @@ namespace BeruTask.Server.Services
                 List<NBPResponseModel> goldPrices = await client.GetFromJsonAsync<List<NBPResponseModel>>(requestUri, cancellationToken);
                 if (goldPrices != null)
                     return this.prepareData(goldPrices, requestModel);
-            }
-            catch (HttpRequestException ex)
-            {
-                if (!ex.Message.Contains(HttpStatusCode.Unauthorized.ToString()))
-                {
-
-                }
-            }
+            
+           
             return null;
         }
 

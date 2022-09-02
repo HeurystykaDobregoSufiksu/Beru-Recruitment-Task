@@ -17,21 +17,27 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+IMapper mapper = new MapperConfiguration((Action<IMapperConfigurationExpression>)(cfg =>
+{
+    cfg.CreateMap<GoldPriceModel, GoldPriceJsonDto>();
+    cfg.CreateMap<GoldPriceDto, GoldPriceModel>();
+    cfg.CreateMap<GoldPriceModel, GoldPriceDto>();
+})).CreateMapper();
+
+builder.Services.AddSingleton(mapper);
+builder.Services.AddDbContext<GoldPriceContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
+
 builder.Services.AddScoped<IGetDataService, GetDataService>();
 builder.Services.AddScoped<ISaveDataService, SaveDataService>();
 builder.Services.AddScoped<IGoldPriceRepo, GoldPriceRepo>();
-builder.Services.AddDbContext<GoldPriceContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("default")));
+
 builder.Services.AddHttpClient("nbp", (Action<HttpClient>)(c =>
 {
     c.BaseAddress = new Uri("http://api.nbp.pl/api/cenyzlota/");
     c.DefaultRequestHeaders.Add("Accept", "application/json");
 }));
-IMapper mapper = new MapperConfiguration((Action<IMapperConfigurationExpression>)(cfg =>
-{
-    cfg.CreateMap<GoldPriceModel, GoldPriceJsonDto>();
-    cfg.CreateMap<GoldPriceDto, GoldPriceModel>();
-})).CreateMapper();
+
 
 var app = builder.Build();
 

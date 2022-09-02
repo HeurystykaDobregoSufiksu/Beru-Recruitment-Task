@@ -1,5 +1,49 @@
-﻿<h3>InputDatesComponent</h3>
+﻿
+@using BeruTask.Client.Services.Interfaces
+@using BeruTask.Shared
+<h3>InputDatesComponent</h3>
+
+<EditForm EditContext="editContext" OnValidSubmit=@handleSubmit>
+    <DataAnnotationsValidator />
+
+    <div class="form-group">
+        <label for="startDate">startDate</label>
+        <InputDate @bind-Value=model.startDate class="form-control" id="startDate" />
+        <ValidationMessage For="() => model.startDate"/>
+    </div>
+    <div class="form-group">
+        <label for="endDate">endDate</label>
+        <InputDate @bind-Value=model.endDate class="form-control" id="endDate" />
+        <ValidationMessage For="() => model.endDate"/>
+    </div>
+    <input type="submit" class="btn btn-primary" value="Save" />
+</EditForm>
 
 @code {
+    private EditContext? editContext;
+    private RequestModel model;
+    private GoldPriceDto priceData;
+    [Inject]
+    private IGoldPriceService _goldPriceService { get; set; }
 
+    protected override void OnInitialized()
+    {
+        this.model = new RequestModel();
+        editContext = new(model);
+        editContext.OnFieldChanged += HandleValidationRequested;
+        base.OnInitialized();
+    }
+    private void HandleValidationRequested(object sender, FieldChangedEventArgs e)
+    {
+        editContext.Validate();
+    }
+    public async Task<bool> handleSubmit()
+    {
+
+        priceData = await this._goldPriceService.getData(this.model);
+        return true;
+    }
+     public void Dispose() {
+         if(editContext is not null) editContext.OnFieldChanged -= HandleValidationRequested;
+    }
 }

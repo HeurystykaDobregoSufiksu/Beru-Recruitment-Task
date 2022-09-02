@@ -1,23 +1,62 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BeruTask.Server.Models;
+using BeruTask.Server.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using BeruTask.Shared;
+using System.Net;
 
 namespace BeruTask.Server.Controllers
 {
-    [Route("api/[controller]")]
+    
     [ApiController]
     public class GoldPriceController : ControllerBase
     {
-       /* [HttpPost("api/prices")]
-        public async Task<ActionResult<RequestModel>> Prices([FromBody] RequestModel model)
+        private readonly ISaveDataService _saveDataService;
+        private readonly IGetDataService _getDataService;
+        private readonly IMapper _mapper;
+
+        public GoldPriceController(ISaveDataService saveDataService, IGetDataService getDataService, IMapper mapper)
         {
-            GoldPriceModel data = await this._getDataService.GetDataAsync(model);
+            _saveDataService = saveDataService;
+            _getDataService = getDataService;
+            _mapper = mapper;
+        }
+
+        [HttpPost("api/prices")]
+        public async Task<ActionResult<ResponseModel<GoldPriceDto>>> Prices([FromBody] RequestModel model)
+        {
+            GoldPriceModel data;
+
+            try
+            {
+                data = await _getDataService.GetDataAsync(model);
+            }
+            catch (HttpRequestException ex)
+            {
+
+                if (ex.StatusCode == HttpStatusCode.BadRequest)
+                {
+
+                }
+                else if (ex.StatusCode == HttpStatusCode.NotFound)
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+            data = null;
+            var response = new ResponseModel<GoldPriceDto>();
             if (data != null)
             {
-                bool res = await this._saveDataService.SaveData(data);
+                response.Data = _mapper.Map<GoldPriceModel, GoldPriceDto>(data);
+                    await this._saveDataService.SaveData(data);
+                
             }
-            ActionResult<RequestModel> prices = (ActionResult<RequestModel>)(ActionResult)this.Ok((object)data);
-            data = (GoldPriceModel)null;
-            return prices;
-        }*/
+            return Ok(response);
+        }
     }
 }

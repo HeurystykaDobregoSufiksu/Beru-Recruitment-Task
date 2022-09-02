@@ -23,7 +23,6 @@ namespace BeruTask.Server.Services
 
         public async Task<bool> SaveData(GoldPriceModel saveDataModel)
         {
-           
             return (await SaveDataToDB(saveDataModel)&& await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel)));
         }
 

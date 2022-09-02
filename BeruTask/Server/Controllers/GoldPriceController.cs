@@ -30,13 +30,13 @@ namespace BeruTask.Server.Controllers
         public async Task<ActionResult<ResponseModel<GoldPriceDto>>> Prices([FromBody] RequestModel model)
         {
             var response = new ResponseModel<GoldPriceDto>();
-            GoldPriceModel? data=null;
-
+            
             try
             {
-                data = await _getDataService.GetDataAsync(model);
+                GoldPriceModel data = await _getDataService.GetDataAsync(model);
+                response.Data = _mapper.Map<GoldPriceModel, GoldPriceDto>(data);
+                await this._saveDataService.SaveData(data);
             }
-
             catch (HttpRequestException ex)
             {
                 _logger.LogError(_config.GetSection("LogInfo").GetSection("err_nbpFailed").ToString() +ex.Message + DateTime.Now);
@@ -53,12 +53,7 @@ namespace BeruTask.Server.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-            
-            if (data != null)
-            {
-                response.Data = _mapper.Map<GoldPriceModel, GoldPriceDto>(data);
-                await this._saveDataService.SaveData(data);
-            }
+
             return Ok(response);
         }
     }

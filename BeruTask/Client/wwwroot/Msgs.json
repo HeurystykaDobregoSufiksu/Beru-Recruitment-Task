@@ -1,6 +1,6 @@
 {
   "BadRequest": "Incorrect request",
   "NotFound": "Data not found",
-  "NoContent": "No entries have been found",
+  "NoContent": "No records have been found",
   "InternalServerError": "Something went wrong"
 }

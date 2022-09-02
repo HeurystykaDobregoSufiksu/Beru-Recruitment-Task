@@ -39,7 +39,8 @@ namespace BeruTask.Server.Controllers
             }
             catch (HttpRequestException ex)
             {
-                _logger.LogError(_config.GetSection("LogInfo").GetSection("err_nbpFailed").ToString() +ex.Message + DateTime.Now);
+                _logger.LogError(_config.GetSection("LogInfo").GetSection("err_nbpFailed").ToString() + ex.Message + DateTime.Now);
+
                 if (ex.StatusCode == HttpStatusCode.BadRequest)
                 {
                     return BadRequest();
@@ -48,6 +49,7 @@ namespace BeruTask.Server.Controllers
                 {
                     return NoContent();
                 }
+                else { return StatusCode(StatusCodes.Status500InternalServerError); }
             }
             catch (Exception ex)
             {

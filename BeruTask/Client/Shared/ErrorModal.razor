@@ -1,8 +1,8 @@
 ﻿@using BeruTask.Client.Services.Interfaces
 @using System.Net
 @inject HttpClient Http
-<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
-    <div class="modal-dialog" role="document">
+<div class="modal " tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog center" role="document">
         <div class="modal-content">
            
             <div class="modal-body">
@@ -19,7 +19,6 @@
     <div class="modal-backdrop fade show"></div>
 }
 @code {
-    private string? errorCode;
     private string modalText = string.Empty;
     private bool displayModal = false;
     public string ModalDisplay = "none;";
@@ -47,19 +46,18 @@
     Dictionary<string, string> errors = new Dictionary<string, string>();
     protected override async Task OnInitializedAsync()
     {
-        errors = await Http.GetFromJsonAsync<Dictionary<string, string>>("errorMsgs.json")??new Dictionary<string, string>();
-        _goldPriceService.HondleError += new Action<string>(handleError);
+        errors = await Http.GetFromJsonAsync<Dictionary<string, string>>("Msgs.json")??new Dictionary<string, string>();
+        _goldPriceService.DisplayMessage += new Action<string>(DisplayMessage);
     }
 
     public void Dispose()
     {
-        _goldPriceService.HondleError -= new Action<string>(handleError);
+        _goldPriceService.DisplayMessage -= new Action<string>(DisplayMessage);
     }
 
-    private void handleError(string error)
+    private void DisplayMessage(string msgKey)
     {
-        modalText = errors.ContainsKey(error) ? errors[error] : "Something went wrong";
-        errorCode = error;
+        modalText = errors.ContainsKey(msgKey) ? errors[msgKey] : "Something went wrong";
         displayModal = true;
         Open();
         this.StateHasChanged();

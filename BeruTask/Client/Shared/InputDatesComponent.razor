@@ -55,7 +55,6 @@
     }
     private void HandleValidationRequested(object sender, FieldChangedEventArgs e)
     {
-
         editContext.Validate();
         valMsg = editContext.GetValidationMessages().FirstOrDefault() ?? "";
     }

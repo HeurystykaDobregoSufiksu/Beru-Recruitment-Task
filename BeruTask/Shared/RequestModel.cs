@@ -5,13 +5,13 @@ namespace BeruTask.Shared
 {
     public class RequestModel
     {
-        [Required]
-        
+        [Required(ErrorMessage ="Field is required")]
+        [DataType(DataType.DateTime, ErrorMessage = "Invalid date")]
         [DateValidator("endDate", false)]
         public DateTime startDate { get; set; } = DateTime.Now.AddDays(-1.0);
 
-        [Required]
-        
+        [Required(ErrorMessage = "Field is required")]
+        [DataType(DataType.DateTime, ErrorMessage ="Invalid date")]
         [DateValidator("startDate", true)]
         public DateTime endDate { get; set; } = DateTime.Now;
     }

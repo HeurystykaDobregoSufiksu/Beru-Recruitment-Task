@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="wwwroot\errorMsgs.json">
+    <Content Update="wwwroot\Msgs.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

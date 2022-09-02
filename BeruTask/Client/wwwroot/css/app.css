@@ -14,7 +14,13 @@
     .panel .title {
         color: wheat;
     }
-
+.center {
+    position: absolute;
+    float: left;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
 .div-right {
     border-right: 2px solid rgba(255,255,255,0.2);
 }

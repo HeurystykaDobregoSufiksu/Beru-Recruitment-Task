@@ -13,7 +13,7 @@ namespace BeruTask.Client.Services
         private readonly HttpClient _http;
 
         public event Action<ResponseModel<GoldPriceDto>> OnGetData;
-        public event Action<string> HondleError;
+        public event Action<string> DisplayMessage;
         public GoldPriceService(HttpClient http)
         {
             _http = http;
@@ -22,12 +22,12 @@ namespace BeruTask.Client.Services
         {
             ResponseModel<GoldPriceDto> response=new ResponseModel<GoldPriceDto>();
             HttpResponseMessage res = await _http.PostAsJsonAsync<RequestModel>("api/prices", requestModel);
-            if (res.IsSuccessStatusCode)
+            if (res.StatusCode==HttpStatusCode.OK)
                 response = JsonConvert.DeserializeObject<ResponseModel<GoldPriceDto>>(res.Content.ReadAsStringAsync().Result);
             else
             {
-                if (HondleError != null)
-                    HondleError(res.StatusCode.ToString());
+                if (DisplayMessage != null)
+                    DisplayMessage(res.StatusCode.ToString());
             }
             Action<ResponseModel<GoldPriceDto>> onGetData = this.OnGetData;
             if (onGetData != null)

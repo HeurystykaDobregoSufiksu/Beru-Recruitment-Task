@@ -3,7 +3,23 @@
 <h3>DisplayDataComponent</h3>
 @if (goldPrice != null)
 {
-    
+     <div class="panel col-8 offset-2 col-lg-4 offset-lg-4 mt-4 ">
+      <h1 class="display-5 title">Prices</h1>
+      <div class="row">
+        <div class="col-4 div-right">
+          <p class="title">Start Price:</p>
+          <p class="display-6">@goldPrice.StartPrice</p>
+        </div>
+        <div class="col-4 div-right">
+          <p class="title">End Price:</p>
+          <p class="display-6">@goldPrice.EndPrice</p>
+        </div>
+        <div class="col-4">
+          <p class="title">Average Price:</p>
+          <p class="display-6">@goldPrice.AvgPrice</p>
+        </div>
+      </div>
+    </div> 
 }
 
 @code {
@@ -13,17 +29,17 @@
 
     protected override void OnInitialized()
     {
-        _goldPriceService.OnGetData += new Action<GoldPriceDto>(this.handleData);
+        _goldPriceService.OnGetData += new Action<ResponseModel<GoldPriceDto>>(this.handleData);
     }
 
     public void Dispose() {
-        _goldPriceService.OnGetData -= new Action<GoldPriceDto>(this.handleData);
+        _goldPriceService.OnGetData -= new Action<ResponseModel<GoldPriceDto>>(this.handleData);
     }
 
-    private void handleData(GoldPriceDto dto)
+    private void handleData(ResponseModel<GoldPriceDto> res)
     {
-      this.goldPrice = dto == null ?  null : dto;
-      this.StateHasChanged();
+        goldPrice = res.Data == null ? null : res.Data;
+        this.StateHasChanged();
     }
   }
 }

@@ -1,28 +1,44 @@
-﻿
-@using BeruTask.Client.Services.Interfaces
+﻿@using BeruTask.Client.Services.Interfaces
 @using BeruTask.Shared
-<h3>InputDatesComponent</h3>
 
 <EditForm EditContext="editContext" OnValidSubmit=@handleSubmit>
     <DataAnnotationsValidator />
+    <div class="panel col-6 offset-3 col-lg-4 offset-lg-4 mt-4 ">
+        <h1 class="display-5 title">Gold price</h1>
+        <div class="row">
+            <div class="form-group col-12 col-lg-6">
+                <label for="startDate">Start date:</label>
+                <InputDate @bind-Value=model.startDate class="form-control w-100" Max='@DateTime.Today' id="startDate" aria-describedby="emailHelp" placeholder="Enter date" />
 
-    <div class="form-group">
-        <label for="startDate">startDate</label>
-        <InputDate @bind-Value=model.startDate class="form-control" id="startDate" />
-        <ValidationMessage For="() => model.startDate"/>
+            </div>
+            <div class="form-group col-12 col-lg-6">
+                <label for="endDate">End date:</label>
+                <InputDate @bind-Value=model.endDate class="form-control w-100" Max='@DateTime.Today' id="endDate" aria-describedby="emailHelp" placeholder="Enter date" />
+            </div>
+        </div>
+        @if (!string.IsNullOrEmpty(valMsg))
+        {
+            <div class="row mt-3 ">
+                <div class="col-12 alert alert-danger text-center mt-3 ">
+                    @valMsg
+                </div>
+            </div>
+        }
+        <div class="d-flex justify-content-center justify-content-lg-end mt-3">
+            <input type="submit" class="btn btn-primary" value="Get data" />
+        </div>
+
     </div>
-    <div class="form-group">
-        <label for="endDate">endDate</label>
-        <InputDate @bind-Value=model.endDate class="form-control" id="endDate" />
-        <ValidationMessage For="() => model.endDate"/>
-    </div>
-    <input type="submit" class="btn btn-primary" value="Save" />
+
 </EditForm>
+
+
 
 @code {
     private EditContext? editContext;
     private RequestModel model;
-    private GoldPriceDto priceData;
+
+    private string valMsg = string.Empty;
     [Inject]
     private IGoldPriceService _goldPriceService { get; set; }
 
@@ -36,14 +52,14 @@
     private void HandleValidationRequested(object sender, FieldChangedEventArgs e)
     {
         editContext.Validate();
+        valMsg = editContext.GetValidationMessages().FirstOrDefault() ?? "";
     }
-    public async Task<bool> handleSubmit()
+    public async Task handleSubmit()
     {
-
-        priceData = await this._goldPriceService.getData(this.model);
-        return true;
+        await this._goldPriceService.getData(this.model);
     }
-     public void Dispose() {
-         if(editContext is not null) editContext.OnFieldChanged -= HandleValidationRequested;
+    public void Dispose()
+    {
+        if (editContext is not null) editContext.OnFieldChanged -= HandleValidationRequested;
     }
 }

@@ -1,7 +1,28 @@
 ﻿@import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
+.panel {
+    padding: 20px;
+    color: white;
+    background: rgba( 0, 0, 0, 0.2 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 10px );
+    -webkit-backdrop-filter: blur( 10px );
+    border-radius: 10px;
+
+}
+
+    .panel .title {
+        color: wheat;
+    }
+
+.div-right {
+    border-right: 2px solid rgba(255,255,255,0.2);
+}
 html, body {
+   
+    height: 100vh;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-image: linear-gradient(180deg, rgb(5, 39, 103) 0%, #3a0647 70%);
 }
 
 h1:focus {

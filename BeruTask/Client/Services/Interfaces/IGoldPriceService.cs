@@ -5,8 +5,9 @@ namespace BeruTask.Client.Services.Interfaces
 {
     public interface IGoldPriceService
     {
-        event Action<GoldPriceDto> OnGetData;
+        event Action<ResponseModel<GoldPriceDto>> OnGetData;
+        public event Action<string> HondleError;
 
-        Task<GoldPriceDto> getData(RequestModel requestModel);
+        Task getData(RequestModel requestModel);
     }
 }

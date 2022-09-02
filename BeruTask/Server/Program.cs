@@ -38,6 +38,8 @@ builder.Services.AddHttpClient("nbp", (Action<HttpClient>)(c =>
     c.DefaultRequestHeaders.Add("Accept", "application/json");
 }));
 
+builder.Services.AddLogging();
+
 
 var app = builder.Build();
 
@@ -52,7 +54,11 @@ else
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<GoldPriceContext>();
+    dataContext.Database.Migrate();
+}
 app.UseHttpsRedirection();
 
 app.UseBlazorFrameworkFiles();

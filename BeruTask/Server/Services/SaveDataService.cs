@@ -11,16 +11,19 @@ namespace BeruTask.Server.Services
         private readonly IGoldPriceRepo _goldPriceRepo;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
+        private readonly ILogger<SaveDataService> _logger;
 
-        public SaveDataService(IGoldPriceRepo goldPriceRepository,IConfiguration config,IMapper mapper)
+        public SaveDataService(IGoldPriceRepo goldPriceRepository,IConfiguration config,IMapper mapper, ILogger<SaveDataService> logger)
         {
             _goldPriceRepo = goldPriceRepository;
             _config = config;
-           _mapper = mapper;
+            _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<bool> SaveData(GoldPriceModel saveDataModel)
         {
+           
             return (await SaveDataToDB(saveDataModel)&& await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel)));
            /* bool flag = await SaveDataToDB(saveDataModel);
             if (flag) flag = await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel));
@@ -29,8 +32,16 @@ namespace BeruTask.Server.Services
 
         public async Task<bool> SaveDataToDB(GoldPriceModel saveDataModel)
         {
-            bool db = await _goldPriceRepo.SaveData(saveDataModel);
-            return db;
+            bool isSuccessful = false;
+            try
+            {
+                isSuccessful = await _goldPriceRepo.SaveData(saveDataModel);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, _config.GetSection("LogInfo").GetSection("err_db").ToString()+ DateTime.Now);
+            }
+            return isSuccessful;
         }
 
         public async Task<bool> SaveDataToJsonFile(GoldPriceJsonDto saveDataModel)
@@ -54,6 +65,7 @@ namespace BeruTask.Server.Services
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, _config.GetSection("LogInfo").GetSection("err_json").ToString() + DateTime.Now);
             }
             return false;
         }

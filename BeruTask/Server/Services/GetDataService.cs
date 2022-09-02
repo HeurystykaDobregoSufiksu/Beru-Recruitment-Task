@@ -27,20 +27,21 @@ namespace BeruTask.Server.Services
             string requestUri = string.Format(startDate + "/" + endDate);
             CancellationToken cancellationToken = new CancellationToken();
             List<NBPResponseModel> goldPrices = await client.GetFromJsonAsync<List<NBPResponseModel>>(requestUri, cancellationToken);
+            client.Dispose();
             if (goldPrices != null)
             {
                 _logger.LogInformation(_config.GetSection("LogInfo").GetSection("com_nbpSucc").ToString() + DateTime.Now);
                 return this.prepareData(goldPrices, requestModel);
             }
-            return null;
+            else { return null; }
+          
         }
 
-        public GoldPriceModel prepareData(List<NBPResponseModel> nrbData, RequestModel requestModel)
+        private GoldPriceModel prepareData(List<NBPResponseModel> nrbData, RequestModel requestModel)
         {
             return new GoldPriceModel()
             {
-                StartDate = requestModel.startDate,
-                EndDate = requestModel.endDate,
+           
                 StartPrice = nrbData.First<NBPResponseModel>().cena,
                 EndPrice = nrbData.Last<NBPResponseModel>().cena,
                 AvgPrice = Math.Round(nrbData.Select<NBPResponseModel, double>((Func<NBPResponseModel, double>)(x => x.cena)).Average(), 2),

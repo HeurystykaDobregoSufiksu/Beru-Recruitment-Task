@@ -1,0 +1,67 @@
+﻿@using BeruTask.Client.Services.Interfaces
+@using System.Net
+@inject HttpClient Http
+<div class="modal @ModalClass" tabindex="-1" role="dialog" style="display:@ModalDisplay">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+           
+            <div class="modal-body">
+                <p>@modalText</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => Close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+@if (ShowBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+@code {
+    private string? errorCode;
+    private string modalText = string.Empty;
+    private bool displayModal = false;
+    public string ModalDisplay = "none;";
+    public string ModalClass = "";
+    public bool ShowBackdrop = false;
+
+
+    public void Open()
+    { 
+        ModalDisplay = "block;";
+        ModalClass = "Show";
+        ShowBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        ModalDisplay = "none";
+        ModalClass = "";
+        ShowBackdrop = false;
+        StateHasChanged();
+    }
+    [Inject]
+    private IGoldPriceService _goldPriceService { get; set; }
+    Dictionary<string, string> errors = new Dictionary<string, string>();
+    protected override async Task OnInitializedAsync()
+    {
+        errors = await Http.GetFromJsonAsync<Dictionary<string, string>>("errorMsgs.json")??new Dictionary<string, string>();
+        _goldPriceService.HondleError += new Action<string>(handleError);
+    }
+
+    public void Dispose()
+    {
+        _goldPriceService.HondleError -= new Action<string>(handleError);
+    }
+
+    private void handleError(string error)
+    {
+        modalText = errors.ContainsKey(error) ? errors[error] : "Something went wrong";
+        errorCode = error;
+        displayModal = true;
+        Open();
+        this.StateHasChanged();
+    }
+}

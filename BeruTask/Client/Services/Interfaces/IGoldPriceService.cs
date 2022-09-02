@@ -1,5 +1,6 @@
 ﻿
 using BeruTask.Shared;
+using System.Net;
 
 namespace BeruTask.Client.Services.Interfaces
 {

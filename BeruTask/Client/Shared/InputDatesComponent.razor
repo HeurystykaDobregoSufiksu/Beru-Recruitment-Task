@@ -31,13 +31,17 @@
     </div>
 
 </EditForm>
+@if (displayLoader)
+{
+    <div class="row mt-5 align-content-center"> <div class="spinner"></div></div>
 
+}
 
 
 @code {
     private EditContext? editContext;
     private RequestModel model;
-
+    private bool displayLoader = false;
     private string valMsg = string.Empty;
     [Inject]
     private IGoldPriceService _goldPriceService { get; set; }
@@ -51,12 +55,15 @@
     }
     private void HandleValidationRequested(object sender, FieldChangedEventArgs e)
     {
+
         editContext.Validate();
         valMsg = editContext.GetValidationMessages().FirstOrDefault() ?? "";
     }
     public async Task handleSubmit()
     {
+        displayLoader = true;
         await this._goldPriceService.getData(this.model);
+        displayLoader = false;
     }
     public void Dispose()
     {

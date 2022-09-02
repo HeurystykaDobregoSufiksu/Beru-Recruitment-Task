@@ -25,9 +25,6 @@ namespace BeruTask.Server.Services
         {
            
             return (await SaveDataToDB(saveDataModel)&& await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel)));
-           /* bool flag = await SaveDataToDB(saveDataModel);
-            if (flag) flag = await SaveDataToJsonFile(_mapper.Map<GoldPriceModel, GoldPriceJsonDto>(saveDataModel));
-            return flag;*/
         }
 
         public async Task<bool> SaveDataToDB(GoldPriceModel saveDataModel)
@@ -59,7 +56,6 @@ namespace BeruTask.Server.Services
                 using (FileStream createStream = File.OpenWrite(this._config.GetSection("JSONfileName").Value))
                 {
                     await JsonSerializer.SerializeAsync<List<GoldPriceJsonDto>>((Stream)createStream, list);
-                    await createStream.DisposeAsync();
                     return true;
                 }
             }

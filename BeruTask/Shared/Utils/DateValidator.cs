@@ -19,6 +19,11 @@ namespace BeruTask.Shared.Utils
             object obj = context.ObjectType.GetProperty(this._variableName).GetValue(context.ObjectInstance);
             if (obj != null && DateTime.TryParse(obj.ToString(), out DateTime result1) && DateTime.TryParse(value.ToString(), out DateTime result2))
             {
+                if (DateTime.Compare(result2, DateTime.Now) == 1)
+                {
+                    this._message = "Date cannot be in the future";
+                    return new ValidationResult(this._message, (IEnumerable<string>)new string[1] { context.MemberName });
+                }
                 var dayDiff = (result1 - result2).TotalDays;
                 if(Math.Abs(dayDiff) > 365)
                 {
